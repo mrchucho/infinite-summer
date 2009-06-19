@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block body %}
+<form action="/contact" method="POST">
+    <label for="from">From</label>
+    <input id="from" name="from" type="text">
+    <label for="subject">Subject</label>
+    <input id="subject" name="subject" type="text">
+    <label for="body">Body</label>
+    <textarea id="body" name="body" type="text" rows="8" cols="40"></textarea>
+    <input type="submit" value="Submit">
+</form>
+
+<a href="/">Back</a>
+{% endblock %}

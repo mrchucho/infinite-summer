@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block body %}
+<h1>{{book.title}}</h1>
+<ul>
+    <li>Pages: {{book.pages}}</li>
+    <li>Locations: {{book.locations}}</li>
+</ul>
+<a href="/books/{{book.slug}}/deadlines/">Deadlines for {{book}}<a/>
+<a href="/books/">All Books</a>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block body %}
+<h1>Deadline for {{book.title}}</h1>
+<ul>
+    <li>Starts: {{deadline.starts_on}}</li>
+    <li>Ends: {{deadline.ends_on}}</li>
+    <li>Page: {{deadline.page}}</li>
+    <li>Location: {{deadline.location}}</li>
+</ul>
+<a href="/books/{{book.slug}}/deadlines/">Deadlines for {{book}}</a>
+<a href="/books/{{book.slug}}/">{{book}}</a>
+{% endblock %}

@@ -1,0 +1,39 @@
+label {
+    display: block;
+}
+input {
+    margin-bottom: 1em;
+}
+input[type=submit] {
+    margin: 1em 0;
+    display: block;
+}
+.inline input,
+.inline label {
+    display: inline;
+}
+#flash-message {
+  margin: 0.5em;
+  border: 2px solid #000;
+  background-color: #9f9;
+  -moz-border-radius: 4px;
+  text-align: center;
+}
+
+#flash-message-close {
+  float: right;
+  font-size: 70%;
+  margin: 2px;
+}
+
+a#flash-message-button {
+  text-decoration: none;
+  color: #000;
+  border: 1px solid #9f9;
+}
+
+a#flash-message-button:hover {
+  border: 1px solid #000;
+  background-color: #009;
+  color: #fff;
+}

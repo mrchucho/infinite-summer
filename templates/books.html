@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block body %}
+<h1>Books</h1>
+<table>
+    <tr><th>Title</th><th>Pages</th><th>Locations</th></tr>
+    {% for book in books %}
+    <tr>
+        <td><a href="/books/{{book.slug}}/">{{book.title}}</a></td>
+        <td>{{book.pages}}</td>
+        <td>{{book.locations}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Create a New Book</h2>
+<form action="/books/" method="POST">
+    <label for="book_title">Title</label>
+    <input id="book_title" name="title" type="text">
+    <label for="book_pages">Pages</label>
+    <input id="book_pages" name="pages" type="text">
+    <label for="book_locations">Locations</label>
+    <input id="book_locations" name="locations" type="text">
+    <input type="submit" value="Save">
+</form>
+{% endblock %}

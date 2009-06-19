@@ -1,0 +1,29 @@
+application: infinite-summer
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /favicon.ico
+  static_files: img/favicon.ico
+  upload: img/favicon.ico
+- url: /robots.txt
+  static_files: static/robots.txt
+  upload: static/robots.txt
+- url: /img
+  static_dir: img
+- url: /javascripts
+  static_dir: javascripts
+- url: /stylesheets
+  static_dir: stylesheets
+- url: /remote_api
+  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
+  login: admin
+- url: /books/?.*
+  script: main.py
+  login: admin
+- url: /entries/?.*
+  script: main.py
+  login: required
+- url: .*
+  script: main.py
