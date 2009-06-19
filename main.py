@@ -10,6 +10,7 @@ from google.appengine.api import mail
 
 from base import BaseHandler
 from models import Book, Deadline, Entry, Progress
+from chart import RankedBarChart
 
 class BookDeadlineHandler(BaseHandler):
   DEADLINES_TEMPLATE = os.path.join(BaseHandler.TEMPLATE_PATH, 'deadlines.html')
@@ -108,8 +109,8 @@ class MainHandler(BaseHandler):
       'entries': entries,
       'progress': progress,
       'current_deadline': book.current_deadline(),
-      'top_ten': top_ten,
-      'bottom_ten': bottom_ten,
+      'top_ten': RankedBarChart(top_ten),
+      'bottom_ten': RankedBarChart(bottom_ten),
       'graph': graph,
       'login_url': users.create_login_url("/")
       })

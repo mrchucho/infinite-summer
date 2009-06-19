@@ -10,7 +10,7 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
-# Used 708 times in query history.
+# Used 1214 times in query history.
 - kind: Deadline
   properties:
   - name: book
@@ -49,14 +49,14 @@ indexes:
   - name: created_at
     direction: desc
 
-# Used 52 times in query history.
+# Used 92 times in query history.
 - kind: Entry
   properties:
   - name: book
   - name: reader
   - name: created_at
 
-# Used 308 times in query history.
+# Used 348 times in query history.
 - kind: Entry
   properties:
   - name: book
@@ -93,13 +93,13 @@ indexes:
   - name: book
   - name: page
 
-# Used 144 times in query history.
+# Used 150 times in query history.
 - kind: Progress
   properties:
   - name: book
   - name: progress
 
-# Used 159 times in query history.
+# Used 165 times in query history.
 - kind: Progress
   properties:
   - name: book

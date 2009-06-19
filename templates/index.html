@@ -34,16 +34,10 @@
 </form>
 {% endif %}
 <h3>Top 10</h3>
-<ol>
-    {% for progress in top_ten %}
-    <li>{{progress.reader}}: {{progress.progress|floatformat}}%</li>
-    {% endfor %}
-</ol>
+<img src="{{top_ten.url|escape}}" alt="Top 10 Readers">
+<br>
 
 <h3>Bottom 10</h3>
-<ol>
-    {% for progress in bottom_ten %}
-    <li>{{progress.reader}}: {{progress.progress|floatformat}}%</li>
-    {% endfor %}
-</ol>
+<img src="{{bottom_ten.url|escape}}" alt="Bottom 10 Readers">
+<br>
 {% endblock %}
