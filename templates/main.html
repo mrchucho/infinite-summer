@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block body %}
+<div id="bd">
+    <div class="yui-g">
+        <div class="yui-u first">
+        {% block user %}{% endblock %}
+        </div>
+        <div class="yui-u">
+        {% block overall %}{% endblock %}
+        </div>
+    </div>
+    <div class="yui-g">
+        <div class="yui-u first">
+            {% block top_ten_readers %}{% endblock %}
+        </div>
+        <div class="yui-u">
+            {% block bottom_ten_readers %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}

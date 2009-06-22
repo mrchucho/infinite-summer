@@ -26,6 +26,7 @@ class Http404(Exception):
 class BaseHandler(webapp.RequestHandler):
   TEMPLATE_PATH = os.path.join(os.path.dirname(__file__),'templates')
   __ERROR       = os.path.join(TEMPLATE_PATH,'error.html')
+  DEVELOPMENT   = re.match("^Development\/.*$", os.environ['SERVER_SOFTWARE'])
 
   @property
   def memcache_prefix(self):
@@ -105,3 +106,6 @@ class BaseHandler(webapp.RequestHandler):
 
   def set_cookie(self, name, value):
     self.response.headers.add_header('Set-Cookie','%s=%s' % (name, value))
+
+  def is_development(self):
+    return True if (BaseHandler.DEVELOPMENT is not None) else False

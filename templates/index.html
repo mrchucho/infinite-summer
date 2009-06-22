@@ -1,43 +1,47 @@
-{% extends 'base.html' %}
-{% block body %}
-<h1>{{book.title}}</h1>
-{% if not user %}
-<p>To track your progress, you will need to <a href="{{login_url|escape}}">login</a>.</p>
-{% else %}
-<h2>Reader: {{user.nickname}}</h2>
+{% extends 'main.html'%}
+{% block user %}
+        {% if not user %}
+        <h2>You</h2>
+        <p>To track your progress, you will need to <a href="{{login_url|escape}}">login</a>.</p>
+        {% else %}
+        <h2>Reader: {{user.nickname}}</h2>
 
-<p>Your Progress: {{progress.overall|floatformat}}% [{{progress.relative}}] {{progress.status}}</p>
-<img style="display: inline" src="http://chart.apis.google.com/chart?cht=gom&amp;chs=125x50&amp;chd=t:{{progress.overall}}&amp;chl={{progress.overall|floatformat}}%" alt="Your Progress">
-<p>Current Deadline: {{current_deadline}}</p>
+        <p>Your Progress: {{progress.overall|floatformat}}% [{{progress.relative}}] {{progress.status}}</p>
+        <img style="display: inline" src="http://chart.apis.google.com/chart?cht=gom&amp;chs=125x50&amp;chd=t:{{progress.overall}}&amp;chl={{progress.overall|floatformat}}%" alt="Your Progress">
 
-<h3>Your Recent Entries</h3>
-<span id="graph">{{graph}}</span>
-<table>
-    <tr><th>Entered</th><th>Page</th></tr>
-    {% for entry in entries %}
-    <tr>
-        <td>{{entry.created_at|date:"M d, Y P"}}</td>
-        <td>{{entry.page}}</td>
-    </tr>
-    {% endfor %}
-</table>
+        <h3>Your Recent Entries</h3>
+        <span id="graph">{{graph}}</span>
+        <table>
+            <tr><th>Entered</th><th>Page</th></tr>
+            {% for entry in entries %}
+            <tr>
+                <td>{{entry.created_at|date:"M d, Y P"}}</td>
+                <td>{{entry.page}}</td>
+            </tr>
+            {% endfor %}
+        </table>
 
-<h3>Add an Entry</h3>
-<form action="/entries" method="POST" class="inline">
-    <label for="entry_page">Page</label>
-    <input id="entry_page" name="page" type="text" class="first">
-    <!--
-    <label for="entry_location">Location</label>
-    <input id="entry_location" name="location" type="text">
-    -->
-    <input type="submit" value="Save">
-</form>
-{% endif %}
-<h3>Top 10</h3>
-<img src="{{top_ten.url|escape}}" alt="Top 10 Readers">
-<br>
-
-<h3>Bottom 10</h3>
-<img src="{{bottom_ten.url|escape}}" alt="Bottom 10 Readers">
-<br>
+        <h3>Add an Entry</h3>
+        <form action="/entries" method="POST" class="inline">
+            <label for="entry_page">Page</label>
+            <input id="entry_page" name="page" type="text" class="first">
+            <!--
+            <label for="entry_location">Location</label>
+            <input id="entry_location" name="location" type="text">
+            -->
+            <input type="submit" value="Save">
+        </form>
+        {% endif %}
+{% endblock %}
+{% block overall %}
+        <h2>Current Deadline</h2>
+        <p> {{current_deadline}}</p>
+{% endblock %}
+{% block top_ten_readers %}
+        <h3>Top 10</h3>
+        <img src="{{top_ten.url|escape}}" alt="Top 10 Readers">
+{% endblock %}
+{% block bottom_ten_readers %}
+        <h3>Bottom 10</h3>
+        <img src="{{bottom_ten.url|escape}}" alt="Bottom 10 Readers">
 {% endblock %}

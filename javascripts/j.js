@@ -40,7 +40,7 @@ $(document).ready(function(){
           'click', function () {
             $(this.parentNode.parentNode).remove();
         });
-        $('#body').prepend(el);
+        $('#bd').prepend(el);
         eraseCookie('flash_message');
     } 
 });

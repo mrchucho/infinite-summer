@@ -42,6 +42,7 @@ class Book(db.Model):
   def top_ten_readers(self):
     top_ten_readers = memcache.get("top_ten_readers")
     if not top_ten_readers:
+      # top_ten_readers = self.progress_set.filter("updated_on IN =", self._this_week()).order('-progress').fetch(10)
       top_ten_readers = self.progress_set.order('-progress').fetch(10)
       memcache.set(key = "top_ten_readers", value = top_ten_readers, time = Book.CACHE_EXPIRY)
     return top_ten_readers
@@ -55,6 +56,15 @@ class Book(db.Model):
 
   def progress_stats_for_reader(self, reader):
     return map(lambda e: str(self.entry_vs_deadline(e)), self.entry_set.filter('reader =', reader).order('created_at')) 
+
+  def _this_week(self):
+    date = datetime.date.today()
+    prev = datetime.timedelta(days = -1)
+    self.this_week = [date]
+    while date.weekday() > 0:
+      self.this_week.appen(date)
+      date += prev
+    return self.this_week
 
 class Deadline(db.Model):
   book      = db.ReferenceProperty(Book, required=True)
@@ -91,6 +101,7 @@ class Progress(db.Model):
   last_entry = db.ReferenceProperty(Entry, required=True)
   progress   = db.FloatProperty()
   updated_at = db.DateTimeProperty(required=True, auto_now_add=True, auto_now=True)
+  updated_on = db.DateProperty(required=True, auto_now_add=True, auto_now=True)
 
   @classmethod
   def create(cls, entry):

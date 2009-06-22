@@ -37,3 +37,7 @@ a#flash-message-button:hover {
   background-color: #009;
   color: #fff;
 }
+
+#ft {
+    margin-top: 2em;
+}

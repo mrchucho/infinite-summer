@@ -136,6 +136,8 @@ class ContactHandler(BaseHandler):
     self.redirect("/")
 
 def main():
+  if BaseHandler.DEVELOPMENT:
+    logging.getLogger().setLevel(logging.DEBUG)
   application = webapp.WSGIApplication([
     ('/books/?([^/]*)/deadlines/?([^/]*)/?', BookDeadlineHandler),
     ('/books/?([^/]*)/?', BookHandler),
