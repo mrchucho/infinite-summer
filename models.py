@@ -15,6 +15,7 @@ class Book(db.Model):
   CACHE_EXPIRY = 60*60
 
   def __init__(self, *args, **kwargs):
+    self.this_week = None
     if 'title' in kwargs:
       slug = re.sub('\W', '-', kwargs["title"]).lower()
       kwargs["key_name"] = slug
@@ -39,31 +40,46 @@ class Book(db.Model):
     else:
       return 0
 
-  def top_ten_readers(self):
+  def top_ten_readers(self, this_week_only = False):
     top_ten_readers = memcache.get("top_ten_readers")
     if not top_ten_readers:
-      # top_ten_readers = self.progress_set.filter("updated_on IN =", self._this_week()).order('-progress').fetch(10)
-      top_ten_readers = self.progress_set.order('-progress').fetch(10)
+      query = self.progress_set
+      if this_week_only:
+        query.filter("updated_on IN ", self._this_week())
+      top_ten_readers = query.order('-progress').fetch(10)
       memcache.set(key = "top_ten_readers", value = top_ten_readers, time = Book.CACHE_EXPIRY)
     return top_ten_readers
 
-  def bottom_ten_readers(self):
+  def bottom_ten_readers(self, this_week_only = False):
     bottom_ten_readers = memcache.get("bottom_ten_readers")
     if not bottom_ten_readers:
-      bottom_ten_readers = self.progress_set.order('progress').fetch(10)
+      query = self.progress_set
+      if this_week_only:
+        query.filter("updated_on IN ", self._this_week())
+      bottom_ten_readers = query.order('progress').fetch(10)
       memcache.set(key = "bottom_ten_readers", value = bottom_ten_readers, time = Book.CACHE_EXPIRY)
     return bottom_ten_readers
 
   def progress_stats_for_reader(self, reader):
     return map(lambda e: str(self.entry_vs_deadline(e)), self.entry_set.filter('reader =', reader).order('created_at')) 
 
+  def readers_today(self):
+    readers_today = memcache.get("readers_today")
+    if not readers_today:
+      all_progress_today = db.GqlQuery("SELECT __key__ FROM Progress WHERE book = :book AND updated_on = :updated_on",
+                                        book = self, updated_on = datetime.date.today())
+      readers_today = len(set(map(lambda key: key.name(), all_progress_today)))
+      memcache.set(key = "readers_today", value = readers_today, time = Book.CACHE_EXPIRY)
+    return readers_today
+
   def _this_week(self):
-    date = datetime.date.today()
-    prev = datetime.timedelta(days = -1)
-    self.this_week = [date]
-    while date.weekday() > 0:
-      self.this_week.appen(date)
-      date += prev
+    if not self.this_week:
+      date = datetime.date.today()
+      prev = datetime.timedelta(days = 1)
+      self.this_week = [date]
+      while date.weekday() > 0:
+        date -= prev
+        self.this_week.append(date)
     return self.this_week
 
 class Deadline(db.Model):
