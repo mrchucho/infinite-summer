@@ -40,25 +40,17 @@ class Book(db.Model):
     else:
       return 0
 
-  def top_ten_readers(self, this_week_only = False):
-    top_ten_readers = memcache.get("top_ten_readers")
-    if not top_ten_readers:
-      query = self.progress_set
-      if this_week_only:
-        query.filter("updated_on IN ", self._this_week())
-      top_ten_readers = query.order('-progress').fetch(10)
-      memcache.set(key = "top_ten_readers", value = top_ten_readers, time = Book.CACHE_EXPIRY)
-    return top_ten_readers
+  def top_ten_readers(self):
+    return self._top_readers(top_ten = True, this_week_only = False, memcache_key = "top_ten_readers")
 
-  def bottom_ten_readers(self, this_week_only = False):
-    bottom_ten_readers = memcache.get("bottom_ten_readers")
-    if not bottom_ten_readers:
-      query = self.progress_set
-      if this_week_only:
-        query.filter("updated_on IN ", self._this_week())
-      bottom_ten_readers = query.order('progress').fetch(10)
-      memcache.set(key = "bottom_ten_readers", value = bottom_ten_readers, time = Book.CACHE_EXPIRY)
-    return bottom_ten_readers
+  def bottom_ten_readers(self):
+    return self._top_readers(top_ten = False, this_week_only = False, memcache_key = "bottom_ten_readers")
+
+  def top_ten_readers_this_week(self):
+    return self._top_readers(top_ten = True, this_week_only = True, memcache_key = "top_ten_readers_this_week")
+
+  def bottom_ten_readers_this_week(self):
+    return self._top_readers(top_ten = False, this_week_only = True, memcache_key = "bottom_ten_readers_this_week")
 
   def progress_stats_for_reader(self, reader):
     return map(lambda e: str(self.entry_vs_deadline(e)), self.entry_set.filter('reader =', reader).order('created_at')) 
@@ -71,6 +63,19 @@ class Book(db.Model):
       readers_today = len(set(map(lambda key: key.name(), all_progress_today)))
       memcache.set(key = "readers_today", value = readers_today, time = Book.CACHE_EXPIRY)
     return readers_today
+
+  def _top_readers(self, **kwargs):
+    this_week_only = kwargs["this_week_only"]
+    memcache_key = kwargs["memcache_key"]
+    order = "-progress" if kwargs["top_ten"] is True else "progress"
+    top_readers = memcache.get(memcache_key)
+    if not top_readers:
+      query = self.progress_set
+      if this_week_only:
+        query.filter("updated_on IN ", self._this_week())
+      top_readers = query.order(order).fetch(10)
+      memcache.set(key = memcache_key, value = top_readers, time = Book.CACHE_EXPIRY)
+    return top_readers
 
   def _this_week(self):
     if not self.this_week:

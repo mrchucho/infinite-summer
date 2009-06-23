@@ -39,10 +39,14 @@
         <p><strong>{{readers_today}}</strong> reader{{readers_today|pluralize}} updated their progress today.</p>
 {% endblock %}
 {% block top_ten_readers %}
-        <h3>Top 10</h3>
+        <h3>This Week's Top 10</h3>
+        <img src="{{top_ten_this_week.url|escape}}" alt="This Week's Top 10 Readers">
+        <h3>Overall Top 10</h3>
         <img src="{{top_ten.url|escape}}" alt="Top 10 Readers">
 {% endblock %}
 {% block bottom_ten_readers %}
-        <h3>Bottom 10</h3>
+        <h3>This Week's Bottom 10</h3>
+        <img src="{{bottom_ten_this_week.url|escape}}" alt="This Week's Bottom 10 Readers">
+        <h3>Overall Bottom 10</h3>
         <img src="{{bottom_ten.url|escape}}" alt="Bottom 10 Readers">
 {% endblock %}

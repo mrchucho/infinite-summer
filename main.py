@@ -100,8 +100,6 @@ class MainHandler(BaseHandler):
     book = Book.get_by_key_name('infinite-summer')
     entries = book.entry_set.filter('reader =', user).order('-created_at').fetch(10)
     progress = book.progress_set.filter('reader =', user).get()
-    top_ten = book.top_ten_readers()
-    bottom_ten = book.bottom_ten_readers()
     graph = ','.join(book.progress_stats_for_reader(user))
     self.render_template(self.INDEX_TEMPLATE, {
       'user': user,
@@ -109,8 +107,10 @@ class MainHandler(BaseHandler):
       'entries': entries,
       'progress': progress,
       'current_deadline': book.current_deadline(),
-      'top_ten': RankedBarChart(top_ten),
-      'bottom_ten': RankedBarChart(bottom_ten),
+      'top_ten': RankedBarChart(book.top_ten_readers()),
+      'bottom_ten': RankedBarChart(book.bottom_ten_readers()),
+      'top_ten_this_week': RankedBarChart(book.top_ten_readers_this_week()),
+      'bottom_ten_this_week': RankedBarChart(book.bottom_ten_readers_this_week()),
       'readers_today': book.readers_today(),
       'graph': graph,
       'login_url': users.create_login_url("/")
