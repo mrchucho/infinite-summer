@@ -111,6 +111,7 @@ class MainHandler(BaseHandler):
       'current_deadline': book.current_deadline(),
       'top_ten': RankedBarChart(top_ten),
       'bottom_ten': RankedBarChart(bottom_ten),
+      'readers_today': book.readers_today(),
       'graph': graph,
       'login_url': users.create_login_url("/")
       })

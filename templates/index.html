@@ -36,6 +36,7 @@
 {% block overall %}
         <h2>Current Deadline</h2>
         <p> {{current_deadline}}</p>
+        <p><strong>{{readers_today}}</strong> reader{{readers_today|pluralize}} updated their progress today.</p>
 {% endblock %}
 {% block top_ten_readers %}
         <h3>Top 10</h3>
