@@ -28,6 +28,9 @@ class BaseHandler(webapp.RequestHandler):
   __ERROR       = os.path.join(TEMPLATE_PATH,'error.html')
   DEVELOPMENT   = re.match("^Development\/.*$", os.environ['SERVER_SOFTWARE'])
 
+  def head(self):
+    self.response.set_status(200)
+
   @property
   def memcache_prefix(self):
     return os.getenv("CURRENT_VERSION_ID")
