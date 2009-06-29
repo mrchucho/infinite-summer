@@ -15,6 +15,7 @@ from google.appengine.ext.webapp import template
 from google.appengine.api import mail
 from google.appengine.ext.db import BadKeyError,Timeout
 from google.appengine.runtime import DeadlineExceededError
+from google.appengine.runtime.apiproxy_errors import CapabilityDisabledError, OverQuotaError
 
 class Http404(Exception):
   def __init__(self,value="Not Found"):
@@ -37,13 +38,17 @@ class BaseHandler(webapp.RequestHandler):
 
   """ Handle un-handled exceptions """
   def handle_exception(self,exception,debug_mode=False):
-    if type(exception) is Http404:
+    if isinstance(exception, Http404):
       self.response.set_status(404)
       self.render_template(self.__ERROR,{'header':"Not Found",
         'detail':"Sorry, we couldn't find your document."})
-    elif type(exception) in (Timeout,DeadlineExceededError):
-      self.response.set_status(500)
-      self.render_template(self.__ERROR,{'header':"Server Error",
+    elif isinstance(exception, CapabilityDisabledError):
+      self.response.set_status(503)
+      self.render_template(self.__ERROR,{'header':"Service Unavailable",
+        'detail':"Sorry, Google App Engine is down for maintenance right now. Please try again shortly."})
+    elif any(map(lambda e: isinstance(exception, e), [Timeout, DeadlineExceededError, OverQuotaError])):
+      self.response.set_status(503)
+      self.render_template(self.__ERROR,{'header':"Service Unavailable",
         'detail':"Sorry, we are experiencing unusually high load. Please try again."})
     else:
       msg = 'Unhandled Exception: '.join(traceback.format_exception(*sys.exc_info()))

@@ -1,1 +1,4 @@
+* Fix progress sparkline - add -1,0,1 to Progress
+* Add some margin beneath the sparkline.
+* Move "Finishers" to list of names, paragraph style, above the graphs.
 * Wrap graphs into a single column for iPhone
