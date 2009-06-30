@@ -119,7 +119,7 @@ class Entry(db.Model):
     return entry
 
   def versus_deadline(self):
-    return "" if self.vs_deadline is None else str(self.vs_deadline)
+    return "0" if self.vs_deadline is None else str(self.vs_deadline)
 
   @classmethod
   def _cmp_with_deadline(cls, page, deadline):
