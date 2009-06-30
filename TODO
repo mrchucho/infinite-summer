@@ -1,4 +1,5 @@
-* Fix progress sparkline - add -1,0,1 to Progress
-* Add some margin beneath the sparkline.
+FIXED Fix progress sparkline - add -1,0,1 to Progress
+FIXED Add some margin beneath the sparkline.
+* Don't use isinstance in Entry.create
 * Move "Finishers" to list of names, paragraph style, above the graphs.
 * Wrap graphs into a single column for iPhone

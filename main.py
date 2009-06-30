@@ -77,11 +77,10 @@ class EntryHandler(BaseHandler):
     page = self.get_int_param("page")
     location = self.get_int_param("location")
     if page or location:
-      entry = Entry(book     = Book.get_by_key_name("infinite-summer"),
-                    reader   = users.get_current_user(),
-                    page     = page,
-                    location = location)
-      entry.put()
+      entry = Entry.create(book     = Book.get_by_key_name("infinite-summer"),
+                           reader   = users.get_current_user(),
+                           page     = page,
+                           location = location)
       Progress.create(entry)
     else:
       self.set_cookie("flash_message", "Please specify a page.")

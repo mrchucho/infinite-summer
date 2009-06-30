@@ -28,18 +28,6 @@ class Book(db.Model):
   def current_deadline(self):
     return Deadline.current(self.deadline_set).get()
 
-  def entry_vs_deadline(self, entry):
-    if not entry:
-      return -1
-    deadline = self.current_deadline()
-    logging.debug("%d < %d > %d" % (deadline.start_page, entry.page, deadline.page))
-    if entry.page < deadline.start_page:
-      return -1
-    elif entry.page > deadline.page:
-      return 1
-    else:
-      return 0
-
   def top_ten_readers(self):
     return self._top_readers(top_ten = True, this_week_only = False, memcache_key = "top_ten_readers")
 
@@ -53,7 +41,7 @@ class Book(db.Model):
     return self._top_readers(top_ten = False, this_week_only = True, memcache_key = "bottom_ten_readers_this_week")
 
   def progress_stats_for_reader(self, reader):
-    return map(lambda e: str(self.entry_vs_deadline(e)), self.entry_set.filter('reader =', reader).order('created_at')) 
+    return map(lambda e: e.versus_deadline(), self.entry_set.filter('reader =', reader).order('created_at')) 
 
   def readers_today(self):
     readers_today = memcache.get("readers_today")
@@ -109,12 +97,38 @@ class Deadline(db.Model):
 
 
 class Entry(db.Model):
-  book       = db.ReferenceProperty(Book, required=True)
-  reader     = db.UserProperty(required=True, auto_current_user_add=True)
-  created_at = db.DateTimeProperty(required=True, auto_now_add=True)
-  page       = db.IntegerProperty()
-  location   = db.IntegerProperty()
+  book        = db.ReferenceProperty(Book, required=True)
+  reader      = db.UserProperty(required=True, auto_current_user_add=True)
+  created_at  = db.DateTimeProperty(required=True, auto_now_add=True)
+  page        = db.IntegerProperty()
+  location    = db.IntegerProperty()
+  vs_deadline = db.IntegerProperty()
 
+  @classmethod
+  def create(cls, *kw, **kwargs):
+    vs_deadline = -1
+    if 'book' in kwargs and 'page' in kwargs:
+      page = kwargs['page']
+      book = kwargs['book']
+      if not isinstance(book, Book):
+        book = Book.get(kwargs['book'])
+      vs_deadline = cls._cmp_with_deadline(page, book.current_deadline())
+    kwargs['vs_deadline'] = vs_deadline
+    entry = cls(**kwargs)
+    entry.put()
+    return entry
+
+  def versus_deadline(self):
+    return "" if self.vs_deadline is None else str(self.vs_deadline)
+
+  @classmethod
+  def _cmp_with_deadline(cls, page, deadline):
+    if page < deadline.start_page:
+      return -1
+    elif page > deadline.page:
+      return 1
+    else:
+      return 0
 
 class Progress(db.Model):
   book       = db.ReferenceProperty(Book, required=True)
@@ -147,10 +161,10 @@ class Progress(db.Model):
 
   def status(self):
     return {
-        0: "On Track",
-        1: "Ahead of Schedule",
-        -1: "Behind Schedule"
-        }[self.book.entry_vs_deadline(self.last_entry)]
+         "0": "On Track",
+         "1": "Ahead of Schedule",
+        "-1": "Behind Schedule"
+        }[self.last_entry.versus_deadline()]
 
   @classmethod
   def _progress(cls, entry):

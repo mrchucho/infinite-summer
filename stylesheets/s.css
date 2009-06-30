@@ -41,3 +41,8 @@ a#flash-message-button:hover {
 #ft {
     margin-top: 2em;
 }
+
+#graph {
+    margin: 1em;
+    display: block;
+}
