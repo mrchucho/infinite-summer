@@ -38,6 +38,12 @@
         <p> {{current_deadline}}</p>
         <p><strong>{{readers_today}}</strong> reader{{readers_today|pluralize}} updated their progress today.</p>
 {% endblock %}
+{% block finishers %}
+<h3>Who is done already?</h3>
+<ol id="finishers">
+    {%for finisher in finishers %} <li>{{ finisher }}</li> {%endfor%}
+</ol>
+{% endblock %}
 {% block top_ten_readers %}
         <h3>This Week's Top 10</h3>
         <img src="{{top_ten_this_week.url|escape}}" alt="This Week's Top 10 Readers">

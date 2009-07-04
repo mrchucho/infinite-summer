@@ -112,7 +112,8 @@ class MainHandler(BaseHandler):
       'bottom_ten_this_week': RankedBarChart(book.bottom_ten_readers_this_week()),
       'readers_today': book.readers_today(),
       'graph': graph,
-      'login_url': users.create_login_url("/")
+      'login_url': users.create_login_url("/"),
+      'finishers': book.finished_readers(),
       })
 
 

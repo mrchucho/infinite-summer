@@ -3,3 +3,8 @@ FIXED Add some margin beneath the sparkline.
 * Don't use isinstance in Entry.create
 * Move "Finishers" to list of names, paragraph style, above the graphs.
 * Wrap graphs into a single column for iPhone
+
+
+NOTE To upload data, do the following:
+$ PYTHONPATH=. appcfg.py upload_data --url=http://localhost:8087/remote_api --has_header --filename=infinite-summer.csv --kind=Deadline --config_file=loader.py .
+

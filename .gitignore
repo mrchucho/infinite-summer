@@ -1,3 +1,5 @@
 index.yaml
 *.pyc
 .*.swp
+bulkloader-log-*
+bulkloader-progress-*

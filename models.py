@@ -13,6 +13,7 @@ class Book(db.Model):
   slug      = db.StringProperty(required=True)
 
   CACHE_EXPIRY = 60*60
+  FINISHED = 100.0
 
   def __init__(self, *args, **kwargs):
     self.this_week = None
@@ -27,6 +28,14 @@ class Book(db.Model):
 
   def current_deadline(self):
     return Deadline.current(self.deadline_set).get()
+
+  def finished_readers(self):
+    finished_readers = memcache.get("finished_readers")
+    if not finished_readers:
+      finished_readers = map(lambda p: re.sub('@.*$', '', p.reader.nickname()), \
+                             self.progress_set.filter("progress =", Book.FINISHED).order("updated_at"))
+      memcache.set("finished_readers", finished_readers)
+    return finished_readers
 
   def top_ten_readers(self):
     return self._top_readers(top_ten = True, this_week_only = False, memcache_key = "top_ten_readers")
@@ -58,7 +67,7 @@ class Book(db.Model):
     order = "-progress" if kwargs["top_ten"] is True else "progress"
     top_readers = memcache.get(memcache_key)
     if not top_readers:
-      query = self.progress_set
+      query = self.progress_set.filter("progress !=", Book.FINISHED)
       if this_week_only:
         query.filter("updated_on IN ", self._this_week())
       top_readers = query.order(order).fetch(10)

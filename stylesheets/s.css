@@ -46,3 +46,14 @@ a#flash-message-button:hover {
     margin: 1em;
     display: block;
 }
+
+#finishers {
+    padding: 0.5em;
+    list-style: none;
+    margin: 0;
+}
+    #finishers li {
+        display: inline;
+        padding-right: 0.25em;
+        margin: 0;
+    }
