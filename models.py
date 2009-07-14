@@ -33,7 +33,7 @@ class Book(db.Model):
     finished_readers = memcache.get("finished_readers")
     if not finished_readers:
       finished_readers = map(lambda p: re.sub('@.*$', '', p.reader.nickname()), \
-                             self.progress_set.filter("progress =", Book.FINISHED).order("updated_at"))
+                             self.progress_set.filter("progress >=", Book.FINISHED).order("updated_at"))
       memcache.set("finished_readers", finished_readers)
     return finished_readers
 
@@ -67,7 +67,7 @@ class Book(db.Model):
     order = "-progress" if kwargs["top_ten"] is True else "progress"
     top_readers = memcache.get(memcache_key)
     if not top_readers:
-      query = self.progress_set.filter("progress !=", Book.FINISHED)
+      query = self.progress_set.filter("progress <", Book.FINISHED)
       if this_week_only:
         query.filter("updated_on IN ", self._this_week())
       top_readers = query.order(order).fetch(10)
