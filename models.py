@@ -33,8 +33,8 @@ class Book(db.Model):
     finished_readers = memcache.get("finished_readers")
     if not finished_readers:
       finished_readers = map(lambda p: re.sub('@.*$', '', p.reader.nickname()), \
-                             self.progress_set.filter("progress >=", Book.FINISHED).order("updated_at"))
-      memcache.set("finished_readers", finished_readers)
+                             self.progress_set.filter("progress >=", Book.FINISHED).order("progress").order("updated_at"))
+      memcache.set(key = "finished_readers", value = finished_readers, time = Book.CACHE_EXPIRY)
     return finished_readers
 
   def top_ten_readers(self):
