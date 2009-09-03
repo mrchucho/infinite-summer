@@ -65,23 +65,19 @@ class EntryHandler(BaseHandler):
 
   def get(self):
     self.redirect("/")
-    """
-    entry_query = Entry.all()
-    entry_query.filter("user=", users.get_current_user())
-    entry_query.filter("book=", Book.get_by_key_name("infinite-summer"))
-    entry_query.order("-created_at")
-    self.response.out.write(entry_query.fetch(10))
-    """
 
   def post(self):
     page = self.get_int_param("page")
     location = self.get_int_param("location")
     if page or location:
-      entry = Entry.create(book     = Book.get_by_key_name("infinite-summer"),
-                           reader   = users.get_current_user(),
-                           page     = page,
-                           location = location)
-      Progress.create(entry)
+      try:
+        entry = Entry.create(book     = Book.get_by_key_name("infinite-summer"),
+                             reader   = users.get_current_user(),
+                             page     = page,
+                             location = location)
+        Progress.create(entry)
+      except ValueError, error:
+        self.set_cookie("flash_message", error)
     else:
       self.set_cookie("flash_message", "Please specify a page.")
 

@@ -27,7 +27,7 @@ class Book(db.Model):
     return self.title
 
   def current_deadline(self):
-    return Deadline.current(self.deadline_set).get()
+    return Deadline.current(self.deadline_set).get() or self.deadline_set.order("-ends_on").get()
 
   def finished_readers(self):
     finished_readers = memcache.get("finished_readers")
@@ -121,6 +121,8 @@ class Entry(db.Model):
       book = kwargs['book']
       if not isinstance(book, Book):
         book = Book.get(kwargs['book'])
+      if page > book.pages:
+        raise ValueError("There are only %d pages." % book.pages)
       vs_deadline = cls._cmp_with_deadline(page, book.current_deadline())
     kwargs['vs_deadline'] = vs_deadline
     entry = cls(**kwargs)
