@@ -3,6 +3,7 @@ FIXED Add some margin beneath the sparkline.
 * Don't use isinstance in Entry.create
 * Move "Finishers" to list of names, paragraph style, above the graphs.
 * Wrap graphs into a single column for iPhone
+* Add a random amount to each Expiry so they don't all expire (and need to be re-queried) at the same time.
 
 
 NOTE To upload data, do the following:
