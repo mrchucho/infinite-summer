@@ -68,7 +68,7 @@ class BookHandler(BaseHandler):
 
   def get(self, book_slug = None):
     if not book_slug:
-      books = Book.all()
+      books = Book.all().order("title")
       self.render_template(self.BOOKS_TEMPLATE,{'books': books})
     else:
       book = self.get_object_by_key_or_404(Book, book_slug)
@@ -107,8 +107,8 @@ class MainHandler(BaseHandler):
   def get(self):
     user = users.get_current_user()
     book = Book.get_by_key_name('infinite-summer')
-    entries = book.entry_set.filter('reader =', user).order('-created_at').fetch(10)
-    progress = book.progress_set.filter('reader =', user).get()
+    entries = book.reader_entries(user)
+    progress = book.reader_progress(user)
     graph = ','.join(book.progress_stats_for_reader(user))
     self.render_template(self.INDEX_TEMPLATE, {
       'user': user,

@@ -37,6 +37,12 @@ class Book(db.Model):
       memcache.set(key = "finished_readers", value = finished_readers, time = Book.CACHE_EXPIRY)
     return finished_readers
 
+  def reader_entries(self, reader):
+    return self.entry_set.filter('reader =', reader).order('-created_at').fetch(10)
+
+  def reader_progress(self, reader):
+    return self.progress_set.filter('reader =', reader).get()
+
   def top_ten_readers(self):
     return self._top_readers(top_ten = True, this_week_only = False, memcache_key = "top_ten_readers")
 
