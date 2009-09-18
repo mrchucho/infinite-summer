@@ -11,15 +11,4 @@
     </tr>
     {% endfor %}
 </table>
-
-<h2>Create a New Book</h2>
-<form action="/books/" method="POST">
-    <label for="book_title">Title</label>
-    <input id="book_title" name="title" type="text">
-    <label for="book_pages">Pages</label>
-    <input id="book_pages" name="pages" type="text">
-    <label for="book_locations">Locations</label>
-    <input id="book_locations" name="locations" type="text">
-    <input type="submit" value="Save">
-</form>
 {% endblock %}

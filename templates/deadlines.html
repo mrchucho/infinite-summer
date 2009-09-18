@@ -10,12 +10,12 @@
         <td>{{deadline.start_page}} - {{deadline.page}}</td>
         <td>{{deadline.start_location}} - {{deadline.location}}</td>
         <td>{{deadline.percent_complete|floatformat:0}}%</td>
-        <td><a href="/books/{{book.slug}}/deadlines/{{deadline.key}}">Edit</a></td>
+        <td><a href="/admin/books/{{book.slug}}/deadlines/{{deadline.key}}">Edit</a></td>
     </tr>
     {% endfor %}
 </table>
 <h2>Create a New Deadline</h2>
-<form action="/books/{{book.slug}}/deadlines/" method="POST">
+<form action="/admin/books/{{book.slug}}/deadlines/" method="POST">
     <label for="deadline_starts_on">Starts</label>
     <input id="deadline_starts_on" name="starts_on" type="text">
     <label for="deadline_ends_on">Ends</label>
@@ -30,5 +30,5 @@
     <input id="deadline_location" name="location" type="text" size="6">
     <input type="submit" value="Save">
 </form>
-<a href="/books/{{book.slug}}/">{{book}}</a>
+<a href="/admin/books/{{book.slug}}/">{{book}}</a>
 {% endblock %}

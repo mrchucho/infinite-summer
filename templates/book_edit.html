@@ -5,5 +5,6 @@
     <li>Pages: {{book.pages}}</li>
     <li>Locations: {{book.locations}}</li>
 </ul>
-<a href="/books/">All Books</a>
+<a href="/admin/books/{{book.slug}}/deadlines/">Deadlines for {{book}}<a/>
+<a href="/admin/books/">All Books</a>
 {% endblock %}

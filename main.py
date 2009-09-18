@@ -37,13 +37,14 @@ class BookDeadlineHandler(BaseHandler):
                         start_page= self.get_int_param('start_page'),
                         start_location= self.get_int_param('start_location'))
     deadline.put()
-    self.redirect('/books/%s/deadlines/%s/' % (book.slug, deadline.key()))
+    self.redirect('/admin/books/%s/deadlines/%s/' % (book.slug, deadline.key()))
 
 
-class BookHandler(BaseHandler):
-  BOOKS_TEMPLATE = os.path.join(BaseHandler.TEMPLATE_PATH, 'books.html')
-  BOOK_TEMPLATE = os.path.join(BaseHandler.TEMPLATE_PATH, 'book.html')
+class BookAdminHandler(BaseHandler):
+  BOOKS_TEMPLATE = os.path.join(BaseHandler.TEMPLATE_PATH, 'books_edit.html')
+  BOOK_TEMPLATE = os.path.join(BaseHandler.TEMPLATE_PATH, 'book_edit.html')
 
+  # admin_only
   def get(self, book_slug = None):
     if not book_slug:
       books = Book.all()
@@ -58,7 +59,20 @@ class BookHandler(BaseHandler):
                 pages     = self.get_int_param('pages'),
                 locations = self.get_int_param('locations'))
     book.put()
-    self.redirect('/books/%s/' % book.slug)
+    self.redirect('/admin/books/%s/' % book.slug)
+
+
+class BookHandler(BaseHandler):
+  BOOKS_TEMPLATE = os.path.join(BaseHandler.TEMPLATE_PATH, 'books.html')
+  BOOK_TEMPLATE = os.path.join(BaseHandler.TEMPLATE_PATH, 'book.html')
+
+  def get(self, book_slug = None):
+    if not book_slug:
+      books = Book.all()
+      self.render_template(self.BOOKS_TEMPLATE,{'books': books})
+    else:
+      book = self.get_object_by_key_or_404(Book, book_slug)
+      self.render_template(self.BOOK_TEMPLATE,{'book': book})
 
 
 class EntryHandler(BaseHandler):
@@ -91,6 +105,8 @@ class MainHandler(BaseHandler):
   INDEX_TEMPLATE = os.path.join(BaseHandler.TEMPLATE_PATH, 'index.html')
 
   def get(self):
+    logging.debug("APP_ID: %s" % os.environ['APPLICATION_ID'])
+    logging.debug("Subdomain: %s" % self.subdomain())
     user = users.get_current_user()
     book = Book.get_by_key_name('infinite-summer')
     entries = book.entry_set.filter('reader =', user).order('-created_at').fetch(10)
@@ -136,7 +152,8 @@ def main():
   if BaseHandler.DEVELOPMENT:
     logging.getLogger().setLevel(logging.DEBUG)
   application = webapp.WSGIApplication([
-    ('/books/?([^/]*)/deadlines/?([^/]*)/?', BookDeadlineHandler),
+    ('/admin/books/?([^/]*)/deadlines/?([^/]*)/?', BookDeadlineHandler),
+    ('/admin/books/?([^/]*)/?', BookAdminHandler),
     ('/books/?([^/]*)/?', BookHandler),
     ('/entries/?', EntryHandler),
     ('/contact/?', ContactHandler),
