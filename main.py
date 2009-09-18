@@ -105,8 +105,6 @@ class MainHandler(BaseHandler):
   INDEX_TEMPLATE = os.path.join(BaseHandler.TEMPLATE_PATH, 'index.html')
 
   def get(self):
-    logging.debug("APP_ID: %s" % os.environ['APPLICATION_ID'])
-    logging.debug("Subdomain: %s" % self.subdomain())
     user = users.get_current_user()
     book = Book.get_by_key_name('infinite-summer')
     entries = book.entry_set.filter('reader =', user).order('-created_at').fetch(10)
