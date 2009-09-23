@@ -117,3 +117,15 @@ class BaseHandler(webapp.RequestHandler):
 
   def is_development(self):
     return True if (BaseHandler.DEVELOPMENT is not None) else False
+
+  def subdomain(self):
+    try:
+      host = self.request.headers['Host']
+      subdomain = host.split(".")[0]
+      if subdomain != os.environ['APPLICATION_ID']:
+        return subdomain
+      else:
+        None
+    except KeyError:
+      return None
+
