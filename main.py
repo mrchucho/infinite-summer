@@ -71,8 +71,27 @@ class BookHandler(BaseHandler):
       books = Book.all().order("title")
       self.render_template(self.BOOKS_TEMPLATE,{'books': books})
     else:
-      book = self.get_object_by_key_or_404(Book, book_slug)
-      self.render_template(self.BOOK_TEMPLATE,{'book': book})
+      self.book = self.get_object_by_key_or_404(Book, book_slug)
+      self._render_book()
+
+  def _render_book(self):
+    user = users.get_current_user()
+    graph = ','.join(self.book.progress_stats_for_reader(user))
+    self.render_template(self.BOOK_TEMPLATE, {
+      'user': user,
+      'book': self.book,
+      'entries': self.book.reader_entries(user),
+      'progress': self.book.reader_progress(user),
+      'current_deadline': self.book.current_deadline(),
+      'top_ten': RankedBarChart(self.book.top_ten_readers()),
+      'bottom_ten': RankedBarChart(self.book.bottom_ten_readers()),
+      'top_ten_this_week': RankedBarChart(self.book.top_ten_readers_this_week()),
+      'bottom_ten_this_week': RankedBarChart(self.book.bottom_ten_readers_this_week()),
+      'readers_today': self.book.readers_today(),
+      'graph': graph,
+      'login_url': users.create_login_url("/"),
+      'finishers': self.book.finished_readers(),
+      })
 
 
 class EntryHandler(BaseHandler):
@@ -101,30 +120,11 @@ class EntryHandler(BaseHandler):
       self.redirect("/")
 
 
-class MainHandler(BaseHandler):
-  INDEX_TEMPLATE = os.path.join(BaseHandler.TEMPLATE_PATH, 'index.html')
+class MainHandler(BookHandler):
 
   def get(self):
-    user = users.get_current_user()
-    book = Book.get_by_key_name('infinite-summer')
-    entries = book.reader_entries(user)
-    progress = book.reader_progress(user)
-    graph = ','.join(book.progress_stats_for_reader(user))
-    self.render_template(self.INDEX_TEMPLATE, {
-      'user': user,
-      'book': book,
-      'entries': entries,
-      'progress': progress,
-      'current_deadline': book.current_deadline(),
-      'top_ten': RankedBarChart(book.top_ten_readers()),
-      'bottom_ten': RankedBarChart(book.bottom_ten_readers()),
-      'top_ten_this_week': RankedBarChart(book.top_ten_readers_this_week()),
-      'bottom_ten_this_week': RankedBarChart(book.bottom_ten_readers_this_week()),
-      'readers_today': book.readers_today(),
-      'graph': graph,
-      'login_url': users.create_login_url("/"),
-      'finishers': book.finished_readers(),
-      })
+    self.book = self.get_object_by_key_or_404(Book, 'infinite-summer')
+    self._render_book()
 
 
 class ContactHandler(BaseHandler):
