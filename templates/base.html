@@ -15,7 +15,10 @@
     </head>
     <body id="body">
         <div id="doc" class="yui-t7">
-            <div id="hd"><h1>Infinite Summer</h1></div>
+            <div id="hd">
+                <h1>{%block header %}Infinite Summer{% endblock %}</h1>
+                <a href="/books/">All Books</a>
+            </div>
             {% block body %} {% endblock %}
             <div id="ft">
                 <p>
