@@ -2,7 +2,7 @@
 {% block body %}
 <h1>Books</h1>
 <table>
-    <tr><th>Title</th><th>Current Deadline</th><th>Pages</th><th>Locations</th></tr>
+    <tr><th>Title</th><th>Current Deadline</th><th>Pages/Chapters</th><th>Locations</th></tr>
     {% for book in books %}
     <tr>
         <td><a href="/books/{{book.slug}}/">{{book.title}}</a></td>

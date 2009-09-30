@@ -11,6 +11,7 @@ class Book(db.Model):
   pages     = db.IntegerProperty(required=True)
   locations = db.IntegerProperty(required=True)
   slug      = db.StringProperty(required=True)
+  page      = db.StringProperty(choices=["Page", "Chapter"])
 
   CACHE_EXPIRY = 60*60
   FINISHED = 100.0
@@ -25,6 +26,10 @@ class Book(db.Model):
 
   def __str__(self):
     return self.title
+
+  @property
+  def page_label(self):
+    return self.page or "Page"
 
   def current_deadline(self):
     return Deadline.current(self.deadline_set).get() or self.deadline_set.order("-ends_on").get()
@@ -108,7 +113,7 @@ class Deadline(db.Model):
     return (float(self.page) / float(self.book.pages)) * 100.0
     
   def __str__(self):
-    return "Page %d by %s" % (self.page, self.ends_on.strftime("%B %d, %Y"))
+    return "%s %d by %s" % (self.book.page_label, self.page, self.ends_on.strftime("%B %d, %Y"))
 
 
 class Entry(db.Model):

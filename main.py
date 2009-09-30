@@ -57,7 +57,8 @@ class BookAdminHandler(BaseHandler):
   def post(self, arg):
     book = Book(title     = self.request.get('title', None), 
                 pages     = self.get_int_param('pages'),
-                locations = self.get_int_param('locations'))
+                locations = self.get_int_param('locations'),
+                page      = self.request.get('page', "Page"))
     book.put()
     self.redirect('/admin/books/%s/' % book.slug)
 
@@ -102,9 +103,10 @@ class EntryHandler(BaseHandler):
   def post(self):
     page = self.get_int_param("page")
     location = self.get_int_param("location")
+    book_key_name = self.request.get("book")
     if page or location:
       try:
-        entry = Entry.create(book     = Book.get_by_key_name("infinite-summer"),
+        entry = Entry.create(book     = Book.get_by_key_name(book_key_name),
                              reader   = users.get_current_user(),
                              page     = page,
                              location = location)
@@ -123,7 +125,7 @@ class EntryHandler(BaseHandler):
 class MainHandler(BookHandler):
 
   def get(self):
-    self.book = self.get_object_by_key_or_404(Book, 'infinite-summer')
+    self.book = self.get_object_by_key_or_404(Book, 'dracula')
     self._render_book()
 
 

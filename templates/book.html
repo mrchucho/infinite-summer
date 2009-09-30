@@ -13,7 +13,7 @@
         <h3>Your Recent Entries</h3>
         <span id="graph">{{graph}}</span>
         <table>
-            <tr><th>Entered</th><th>Page</th></tr>
+            <tr><th>Entered</th><th>{{book.page_label}}</th></tr>
             {% for entry in entries %}
             <tr>
                 <td>{{entry.created_at|date:"M d, Y P"}}</td>
@@ -24,12 +24,13 @@
 
         <h3>Add an Entry</h3>
         <form action="/entries" method="POST" class="inline">
-            <label for="entry_page">Page</label>
+            <label for="entry_page">{{book.page_label}}</label>
             <input id="entry_page" name="page" type="text" class="first">
             <!--
             <label for="entry_location">Location</label>
             <input id="entry_location" name="location" type="text">
             -->
+            <input type="hidden" name="book" value="{{book.key.name}}" />
             <input type="submit" value="Save">
         </form>
         {% endif %}
