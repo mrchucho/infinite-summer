@@ -35,11 +35,12 @@ class Book(db.Model):
     return Deadline.current(self.deadline_set).get() or self.deadline_set.order("-ends_on").get()
 
   def finished_readers(self):
-    finished_readers = memcache.get("finished_readers")
+    memcache_key = self.slug + "finished_readers"
+    finished_readers = memcache.get(memcache_key)
     if not finished_readers:
       finished_readers = map(lambda p: re.sub('@.*$', '', p.reader.nickname()), \
                              self.progress_set.filter("progress >=", Book.FINISHED).order("progress").order("updated_at"))
-      memcache.set(key = "finished_readers", value = finished_readers, time = Book.CACHE_EXPIRY)
+      memcache.set(key = memcache_key, value = finished_readers, time = Book.CACHE_EXPIRY)
     return finished_readers
 
   def reader_entries(self, reader):
@@ -64,17 +65,18 @@ class Book(db.Model):
     return map(lambda e: e.versus_deadline(), self.entry_set.filter('reader =', reader).order('created_at')) 
 
   def readers_today(self):
-    readers_today = memcache.get("readers_today")
+    memcache_key = self.slug + "readers_today"
+    readers_today = memcache.get(memcache_key)
     if not readers_today:
       all_progress_today = db.GqlQuery("SELECT __key__ FROM Progress WHERE book = :book AND updated_on = :updated_on",
                                         book = self, updated_on = datetime.date.today())
       readers_today = len(set(map(lambda key: key.name(), all_progress_today)))
-      memcache.set(key = "readers_today", value = readers_today, time = Book.CACHE_EXPIRY)
+      memcache.set(key = memcache_key, value = readers_today, time = Book.CACHE_EXPIRY)
     return readers_today
 
   def _top_readers(self, **kwargs):
     this_week_only = kwargs["this_week_only"]
-    memcache_key = kwargs["memcache_key"]
+    memcache_key = self.slug + kwargs["memcache_key"]
     order = "-progress" if kwargs["top_ten"] is True else "progress"
     top_readers = memcache.get(memcache_key)
     if not top_readers:
