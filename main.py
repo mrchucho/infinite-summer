@@ -156,7 +156,6 @@ def main():
     ('/admin/books/?([^/]*)/?', BookAdminHandler),
     ('/books/?([^/]*)/?', BookHandler),
     ('/entries/?', EntryHandler),
-    ('/contact/?', ContactHandler),
     ('/', MainHandler),
     ], debug=True)
   wsgiref.handlers.CGIHandler().run(application)
